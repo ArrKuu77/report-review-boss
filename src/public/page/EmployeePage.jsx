@@ -116,8 +116,8 @@ export default function Employee() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    
+      <div className="">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">
@@ -154,6 +154,6 @@ export default function Employee() {
           )}
         </div>
       </div>
-    </main>
+   
   )
 }
