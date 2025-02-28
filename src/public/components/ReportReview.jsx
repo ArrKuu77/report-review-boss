@@ -86,14 +86,14 @@ function ReportReview() {
         query = query.eq("employee_id", selectedEmployee);
       }
       if (startDate == null) {
-        query = query.eq("created_at", formattedDate);
+        query = query.eq("date", formattedDate);
         // .lte("created_at", endDate.toISOString());
       }
 
       if (startDate && endDate) {
         query = query
-          .gte("created_at", startDate.toISOString())
-          .lte("created_at", endDate.toISOString());
+          .gte("date", startDate.toISOString())
+          .lte("date", endDate.toISOString());
       }
 
       const { data, error: supabaseError } = await query;
