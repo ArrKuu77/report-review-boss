@@ -12,28 +12,26 @@ import { Children } from "react";
 
 const router = createBrowserRouter([
   {
-    path : "/",
-    element : <Layout />,
-    children : [
+    element: <Layout />,
+    children: [
       {
-        path : "/home",
-        element : <HomePage/>
-        
+        index: "/",
+        element: <ReportReviewPage />,
       },
       {
-        path : "/employee",
-        element : <EmployeePage />
+        path: "/employee",
+        element: <EmployeePage />,
       },
+      // {
+      //   path: "/report-review",
+      //   element: <ReportReviewPage />,
+      // },
       {
-        path: "/report-review",
-        element: <ReportReviewPage />
+        path: "/report-detail/:id",
+        element: <ReportDetailPage />,
       },
-      {
-        path: "/report-detail",
-        element: <ReportDetailPage />
-      }
-    ]
-  }
+    ],
+  },
 ]);
 
 export default router;

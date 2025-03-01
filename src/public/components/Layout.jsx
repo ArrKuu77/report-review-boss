@@ -1,35 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { NavLink, Outlet } from "react-router-dom"
-import { Home, Info, Menu, X, Moon, Sun, Paperclip, User } from "lucide-react"
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import {
+  Home,
+  Info,
+  Menu,
+  X,
+  Moon,
+  Sun,
+  Paperclip,
+  User,
+  MonitorCog,
+} from "lucide-react";
+import useDarkMode from "../../store/darkMode";
 
 function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isDarkMode, SetDarkMode, SetLightMode } = useDarkMode();
+  console.log(isDarkMode);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    if (!isDarkMode) {
-      document.documentElement.classList.add("dark")
+    // setIsDarkMode();
+    console.log(isDarkMode);
+
+    if (isDarkMode == "true") {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("dark", "false");
+      SetLightMode();
     } else {
-      document.documentElement.classList.remove("dark")
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("dark", "true");
+      SetDarkMode();
     }
-  }
+  };
 
   const menuItems = [
-    { icon: Paperclip, text: "Report", path: "/report-review" },
+    { icon: Paperclip, text: "Report", path: "/" },
     { icon: User, text: "Employee", path: "/employee" },
-  ]
+  ];
 
   return (
-    <div className={`h-screen flex ${isDarkMode ? "dark" : ""}`}>
+    <div className={`h-screen flex ${isDarkMode == "true" ? "dark" : ""}`}>
       {/* Sidebar Overlay */}
-      {isSidebarOpen && <div className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" onClick={toggleSidebar} />}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
 
       {/* Sidebar */}
       <aside
@@ -42,8 +65,17 @@ function Layout() {
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-border dark:border-gray-700">
-          <span className="text-xl font-semibold text-primary">MyApp</span>
-          <button onClick={toggleSidebar} className="p-1 rounded-md lg:hidden hover:bg-muted">
+          <span
+            className={`md:text-md text-sm w-full font-semibold  flex items-center justify-center gap-3  ${
+              isDarkMode == "true" ? "text-white" : "text-black"
+            }`}
+          >
+            <span>Daily Report System</span> <MonitorCog />
+          </span>
+          <button
+            onClick={toggleSidebar}
+            className="p-1 rounded-md lg:hidden hover:bg-muted"
+          >
             <X size={20} />
           </button>
         </div>
@@ -76,7 +108,7 @@ function Layout() {
             onClick={toggleDarkMode}
             className="flex items-center w-full px-4 py-3 text-sm rounded-md text-foreground hover:bg-muted dark:text-gray-300 dark:hover:bg-gray-700"
           >
-            {isDarkMode ? (
+            {isDarkMode == "false" ? (
               <>
                 <Sun size={20} className="mr-3" />
                 <span>Light Mode</span>
@@ -95,7 +127,10 @@ function Layout() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
         <header className="flex items-center h-16 px-6 border-b border-border dark:border-gray-700 bg-background dark:bg-gray-800">
-          <button onClick={toggleSidebar} className="p-2 rounded-md lg:hidden hover:bg-muted dark:hover:bg-gray-700">
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-md lg:hidden hover:bg-muted dark:hover:bg-gray-700"
+          >
             <Menu size={20} />
           </button>
         </header>
@@ -106,8 +141,7 @@ function Layout() {
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default Layout
-
+export default Layout;

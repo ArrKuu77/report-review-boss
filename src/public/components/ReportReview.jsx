@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@supabase/supabase-js";
 import {
   ChevronDown,
   ChevronUp,
@@ -12,122 +12,141 @@ import {
   Loader2,
   Calendar,
   Users,
-} from "lucide-react"
-import DatePicker from "react-datepicker"
-import "react-datepicker/dist/react-datepicker.css"
+  ReceiptText,
+} from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 
 // Initialize Supabase client
-const supabaseUrl = "https://vjhmhyikyllvpirsjpen.supabase.co"
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqaG1oeWlreWxsdnBpcnNqcGVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5Nzk0NTIsImV4cCI6MjA1NTU1NTQ1Mn0.TcyJcTc9CtSH7gSIdGNY4cZHCYUDUGD5ByjYnLks8IA"
+const supabaseUrl = "https://vjhmhyikyllvpirsjpen.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqaG1oeWlreWxsdnBpcnNqcGVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5Nzk0NTIsImV4cCI6MjA1NTU1NTQ1Mn0.TcyJcTc9CtSH7gSIdGNY4cZHCYUDUGD5ByjYnLks8IA";
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 function ReportReview() {
-  const [reports, setReports] = useState([])
-  const [employees, setEmployees] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [sortField, setSortField] = useState("created_at")
-  const [sortDirection, setSortDirection] = useState("desc")
-  const [selectedEmployee, setSelectedEmployee] = useState("all")
-  const [dateRange, setDateRange] = useState([null, null])
-  const [startDate, endDate] = dateRange
+  const currentDate = new Date(); // Get the current date
 
+  const formattedDate = currentDate.toISOString(); // Format the date to ISO string
+  console.log(formattedDate);
+
+  const [reports, setReports] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sortField, setSortField] = useState("created_at");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [selectedEmployee, setSelectedEmployee] = useState("all");
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+  const [limit, setLimit] = useState(2);
   // Fetch employees for the dropdown
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const { data, error: employeeError } = await supabase.from("employee_table").select('name,id')
-        
+        const { data, error: employeeError } = await supabase
+          .from("employee_table")
+          .select("name,id");
 
-        if (employeeError) throw employeeError
-        
-        console.log(data)
-        setEmployees(data.map((employee) => ({ name: employee.name, id: employee.id })))
-        // data.forEach((report) => {  
+        if (employeeError) throw employeeError;
+
+        console.log(data);
+        setEmployees(
+          data.map((employee) => ({ name: employee.name, id: employee.id }))
+        );
+        // data.forEach((report) => {
         //     const obj = {
         //         id : report.employee_id,
         //         name : report.employee_table.name
         //     }
-            
+
         // })
-        
       } catch (err) {
-        console.error("Error fetching employees:", err)
+        console.error("Error fetching employees:", err);
       }
-    }
+    };
 
-    fetchEmployees()
-  }, [])
-
+    fetchEmployees();
+  }, []);
   // Memoized fetch function
+  // const itemsPerPage = 3;
   const fetchReports = useCallback(async () => {
     try {
-      setLoading(true)
+      // const offset = (page - 1) * itemsPerPage;
+      setLoading(true);
       let query = supabase
         .from("reports_table")
         .select(`*, employee_table (name)`)
-        .order(sortField, { ascending: sortDirection === "asc" })
+        // .range(offset, offset + itemsPerPage - 1)
+        .order(sortField, { ascending: sortDirection === "asc" });
 
       if (selectedEmployee !== "all") {
-        query = query.eq("employee_id", selectedEmployee)
+        query = query.eq("employee_id", selectedEmployee);
+      }
+      if (startDate == null) {
+        query = query.eq("date", formattedDate);
+        // .lte("created_at", endDate.toISOString());
       }
 
       if (startDate && endDate) {
-        query = query.gte("created_at", startDate.toISOString()).lte("created_at", endDate.toISOString())
+        query = query
+          .gte("date", startDate.toISOString())
+          .lte("date", endDate.toISOString());
       }
 
-      const { data, error: supabaseError } = await query
+      const { data, error: supabaseError } = await query;
 
-      if (supabaseError) throw supabaseError
-      console.log(data)
-      setReports(data || [])
-      
-      setError(null)
+      if (supabaseError) throw supabaseError;
+      console.log(data);
+      setReports(data || []);
+
+      setError(null);
     } catch (err) {
-      console.error("Error fetching reports:", err)
-      setError(err.message)
-      setReports([])
+      console.error("Error fetching reports:", err);
+      setError(err.message);
+      setReports([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [sortField, sortDirection, selectedEmployee, startDate, endDate])
+  }, [sortField, sortDirection, selectedEmployee, startDate, endDate]);
 
   // Fetch reports when dependencies change
   useEffect(() => {
-    fetchReports()
-  }, [fetchReports])
+    fetchReports();
+  }, [fetchReports]);
 
   const handleSort = (field) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortField(field)
-      setSortDirection("asc")
+      setSortField(field);
+      setSortDirection("asc");
     }
-  }
+  };
 
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
       case "completed":
-        return <CheckCircle2 className="w-5 h-5 text-green-500" />
+        return <CheckCircle2 className="w-5 h-5 text-green-500" />;
       case "pending":
-        return <Clock className="w-5 h-5 text-yellow-500" />
+        return <Clock className="w-5 h-5 text-yellow-500" />;
       case "urgent":
-        return <AlertTriangle className="w-5 h-5 text-red-500" />
+        return <AlertTriangle className="w-5 h-5 text-red-500" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-500" />
+        return <AlertCircle className="w-5 h-5 text-gray-500" />;
     }
-  }
+  };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A"
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   if (error) {
     return (
@@ -137,7 +156,7 @@ function ReportReview() {
           <p className="text-red-600 dark:text-red-400">Error: {error}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -156,7 +175,7 @@ function ReportReview() {
               className="appearance-none w-full pl-10 pr-10 py-2 bg-muted dark:bg-gray-700 border border-border dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Employees</option>
-              {employees.map((employee,index) => (
+              {employees.map((employee, index) => (
                 <option key={index} value={employee.id}>
                   {employee.name}
                 </option>
@@ -191,10 +210,17 @@ function ReportReview() {
           <thead className="bg-muted/50 dark:bg-gray-700/50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                <button onClick={() => handleSort("title")} className="flex items-center gap-1 hover:text-foreground">
+                <button
+                  onClick={() => handleSort("title")}
+                  className="flex items-center gap-1 hover:text-foreground"
+                >
                   Name
                   {sortField === "title" &&
-                    (sortDirection === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    ))}
                 </button>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -207,11 +233,15 @@ function ReportReview() {
                 >
                   Date
                   {sortField === "created_at" &&
-                    (sortDirection === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    ))}
                 </button>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Details
+              <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Report Detail
               </th>
             </tr>
           </thead>
@@ -226,32 +256,46 @@ function ReportReview() {
               </tr>
             ) : reports.length === 0 ? (
               <tr>
-                <td colSpan="4" className="px-6 py-12 text-center text-muted-foreground">
+                <td
+                  colSpan="4"
+                  className="px-6 py-12 text-center text-muted-foreground"
+                >
                   No reports found
                 </td>
               </tr>
             ) : (
               reports.map((report) => (
-                <tr key={report.id} className="hover:bg-muted/50 dark:hover:bg-gray-700/50 transition-colors">
+                <tr
+                  key={report.id}
+                  className="hover:bg-muted/50 dark:hover:bg-gray-700/50 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground dark:text-white">{report.employee_table.name}</span>
-                      <span className="text-xs text-muted-foreground line-clamp-1">{report.description}</span>
+                      <span className="text-sm font-medium text-foreground dark:text-white">
+                        {report.employee_table.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground line-clamp-1">
+                        {report.description}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                     
-                      <span className="text-sm capitalize">{report.township}</span>
+                      <span className="text-sm capitalize">
+                        {report.township}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {formatDate(report.created_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      
-                      <span className="ml-2 text-sm">Report Details</span>
+                    <div className="flex items-center justify-center">
+                      <Link to={`/report-detail/${report.id}`} state={report}>
+                        <span className=" text-sm cursor-pointer">
+                          <ReceiptText className=" text-xl  text-blue-500" />
+                        </span>
+                      </Link>
                     </div>
                   </td>
                 </tr>
@@ -261,8 +305,7 @@ function ReportReview() {
         </table>
       </div>
     </div>
-  )
+  );
 }
 
-export default ReportReview
-
+export default ReportReview;
