@@ -140,7 +140,10 @@ function ReportReview() {
   };
 
   const formatDate = (dateString) => {
+    console.log(dateString);
+
     if (!dateString) return "N/A";
+
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -287,7 +290,7 @@ function ReportReview() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(report.created_at)}
+                    {report.date}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center justify-center">
