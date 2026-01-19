@@ -19,9 +19,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 
 // Initialize Supabase client
-const supabaseUrl = "https://vjhmhyikyllvpirsjpen.supabase.co";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqaG1oeWlreWxsdnBpcnNqcGVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5Nzk0NTIsImV4cCI6MjA1NTU1NTQ1Mn0.TcyJcTc9CtSH7gSIdGNY4cZHCYUDUGD5ByjYnLks8IA";
+const supabaseUrl = "https://bgvxqjymtdtvmbsqxtxk.supabase.co";
+const supabaseKey = "sb_publishable_XidIv5hq7Tw1HPftdDS33w_natGp9u0";
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -77,7 +76,7 @@ function ReportReview() {
       // const offset = (page - 1) * itemsPerPage;
       setLoading(true);
       let query = supabase
-        .from("reports_table")
+        .from("report_DoctorList_Save")
         .select(`*, employee_table (name)`)
         // .range(offset, offset + itemsPerPage - 1)
         .order(sortField, { ascending: sortDirection === "asc" });

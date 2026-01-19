@@ -63,9 +63,9 @@ const ReportDetailPage = () => {
                 <th className="border px-4 py-2 text-sm sm:text-base">
                   Customer's Feedback
                 </th>
-                <th className="border px-4 py-2 text-sm sm:text-base">
+                {/* <th className="border px-4 py-2 text-sm sm:text-base">
                   Action Plan for Next Call
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -95,9 +95,9 @@ const ReportDetailPage = () => {
                   <td className="border px-4 py-2 text-sm sm:text-base">
                     {detail.CustomerFeedback}
                   </td>
-                  <td className="border px-4 py-2 text-sm sm:text-base">
+                  {/* <td className="border px-4 py-2 text-sm sm:text-base">
                     {detail.NextPlan}
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
@@ -177,7 +177,7 @@ const ReportDetailPage = () => {
               Product Quantities
             </h3>
 
-            {report?.daily_productQty.length > 0 ? (
+            {/* {report?.daily_productQty.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
                   <thead>
@@ -212,7 +212,7 @@ const ReportDetailPage = () => {
               </div>
             ) : (
               <p className="text-center text-gray-500">No products found</p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
