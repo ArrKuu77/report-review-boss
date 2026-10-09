@@ -17,6 +17,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+import LocationButton from "./LocationButton";
 
 // Initialize Supabase client
 const supabaseUrl = "https://bgvxqjymtdtvmbsqxtxk.supabase.co";
@@ -53,7 +54,7 @@ function ReportReview() {
 
         console.log(data);
         setEmployees(
-          data.map((employee) => ({ name: employee.name, id: employee.id }))
+          data.map((employee) => ({ name: employee.name, id: employee.id })),
         );
         // data.forEach((report) => {
         //     const obj = {
@@ -306,6 +307,7 @@ function ReportReview() {
           </tbody>
         </table>
       </div>
+      <LocationButton />
     </div>
   );
 }
